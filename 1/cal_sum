@@ -1,0 +1,26 @@
+#!/bin/bash
+
+input=$1
+tempfile=$(mktemp)
+tempfile2=$(mktemp)
+
+sed 's/[a-zA-Z]*//g' "$input" > "$tempfile"
+
+while read -r line; do
+	if [ ${#line} -gt 2 ]; then
+	number="${line:0:1}${line: -1}"
+
+	elif [ ${#line} -lt 2 ]; then
+	number="${line:0:1}${line:0:1}"
+
+	else
+	number="$line"
+	
+	fi
+	echo "$number" >> "$tempfile2"
+done < "$tempfile"
+
+paste -sd+ "$tempfile2" | bc
+
+rm "$tempfile"
+rm "$tempfile2"
