@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -u -o pipefail -o noclobber                                                                                                                        
+
+totalDistance=0
+
+abs() {
+        if (( $(echo "$1 < 0" | bc) )); then
+                echo "$(echo "0 - $1" | bc)"
+        else
+                echo "$1"
+        fi
+}
+
+while IFS=' ' read -r col1 col2; do
+        if [[ -n "$col1" && -n "$col2" ]]; then
+        	verschil=$(echo "$col1 - $col2" | bc)
+        	absVerschil=$(abs "$verschil")
+        	totalDistance=$(echo "$totalDistance + $absVerschil" | bc)
+    	fi
+done < <(paste -d ' ' <(cut -d ' ' -f 1 <"$1" | sort -n) <(cut -d ' ' -f 4 <"$1" | sort -n))
+
+echo "$totalDistance"
